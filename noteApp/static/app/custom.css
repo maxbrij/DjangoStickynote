@@ -1,0 +1,16 @@
+.note-item .card-body {
+    position: relative;
+}
+
+.note-item .card-body::before {
+    content: attr(num);
+    position: absolute;
+    top: 0;
+    left: 10px;
+    bottom: 0;
+    width: max-content;
+    height: max-content;
+    font-size: 6em;
+    margin: auto;
+    color: #0277ff57;
+}

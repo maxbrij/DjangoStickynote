@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'app/custom.css' %}" />  
+{% endblock %}
+
+{% block main_content %}
+<main role="main">
+    <section class="jumbotron text-center m-0">
+      <div class="container">
+        <h1>{{profile_data.FullName}}'s Sticky Notes</h1>
+        <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
+        <p>
+          <a href="#" class="btn btn-primary my-2" data-toggle="modal" data-target="#addNote">Add New Sticky Note</a>
+        </p>
+      </div>
+    </section>
+
+    <div class="py-5 bg-light">
+        <div class="container">
+    
+          <div class="row">
+            {% for note in sticky_notes %}
+            <div class="col-md-4 note-item">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title note-title">{{note.Title}}</h5>
+                        <p class="card-text note-content">{{note.Content}}</p>
+                        
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a note-id="{{note.id}}" class="edit-note-btn btn btn-sm btn-primary" data-toggle="modal" data-target="#editNote">Edit</a>
+                                <a href="{% url 'delete_note' pk=note.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                            <small class="text-muted">{{note.DateCreated}}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="addNote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="POST" action="{% url 'new_note' %}" class="modal-content">
+        {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Note</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <input type="text" class="form-control" name="title" id="title">
+          </div>
+          <div class="form-group">
+            <label for="content" class="col-form-label">Content</label>
+            <textarea class="form-control" name="content" id="content"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="editNote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="POST" action="" class="modal-content">
+        {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Note</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <input type="text" class="form-control" name="title" id="title">
+          </div>
+          <div class="form-group">
+            <label for="content" class="col-form-label">Content</label>
+            <textarea class="form-control" name="content" id="content"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function() {
+    $('.edit-note-btn').click(function() {
+      var note_id = $(this).attr('note-id'),
+        edit_url = `/edit_note/${note_id}/`,
+        modal_id = $(this).attr('data-target');
+
+        title = $(this).parents('.note-item').find('.note-title').text();
+        content = $(this).parents('.note-item').find('.note-content').text();
+        
+        
+      $(modal_id).find('form #title').val(title);
+      $(modal_id).find('form #content').val(content);
+      
+      $(modal_id).find('form').attr('action', edit_url);
+
+    });
+
+    var card_len = $('.card-body').length
+    for (var i = 0; i < card_len; i++) {
+        var n = (i+1);
+        if (n < 10) {
+          n = `0${n}`;
+        }
+        $('.card-body').eq(i).attr('num', n);
+      }
+  });
+</script>
+{% endblock %}

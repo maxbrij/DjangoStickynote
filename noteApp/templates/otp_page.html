@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+<link href="{% static 'app/signin.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_content %}
+    <form class="form-signin text-center" method="POST" action="{% url 'verify_otp' %}">
+      {% csrf_token %}
+      <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Please Enter One Time Password</h1>
+      <label for="inputOTP" class="sr-only">OTP</label>
+      <input type="password" id="inputOTP" name="otp" class="form-control" placeholder="Password" required>
+        {% if msg %}
+        <p style="color: aquamarine;">{{msg}}</p>
+        {% endif %}
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018 | {{app_name}}</p>
+    </form>
+{% endblock %}
